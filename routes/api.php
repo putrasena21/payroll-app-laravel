@@ -22,7 +22,7 @@ Route::prefix('/auth')->group(function () {
     Route::delete('/logout', [AuthController::class, 'logout']);
 });
 
-Route::prefix('employee')->middleware('auth:sanctum')->group(function () {
+Route::prefix('employee')->middleware('checkApiToken')->group(function () {
     Route::get('/', [UserEmployeeController::class, 'index']);
     Route::get('/{id}', [UserEmployeeController::class, 'show']);
 
