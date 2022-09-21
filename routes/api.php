@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\UserEmployeeController;
 use App\Http\Controllers\Api\UserHrdController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::prefix('/auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
 Route::prefix('employee')->group(function () {
     Route::get('/', [UserEmployeeController::class, 'index']);
     Route::get('/{id}', [UserEmployeeController::class, 'show']);

@@ -13,4 +13,9 @@ class VerificationToken extends Model
         'token',
         'user_id',
     ];
+
+    public function userHrd()
+    {
+        return $this->belongsTo(UserHrd::class);
+    }
 }
