@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\UserEmployeeController;
 use App\Http\Controllers\Api\UserHrdController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::prefix('employee')->group(function () {
+Route::prefix('/auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::delete('/logout', [AuthController::class, 'logout']);
+});
+
+Route::prefix('employee')->middleware('checkApiToken')->group(function () {
     Route::get('/', [UserEmployeeController::class, 'index']);
     Route::get('/{id}', [UserEmployeeController::class, 'show']);
 
@@ -26,7 +33,7 @@ Route::prefix('employee')->group(function () {
     Route::delete('/{id}', [UserEmployeeController::class, 'delete']);
 });
 
-Route::prefix('hrd')->group(function () {
+Route::prefix('hrd')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [UserHrdController::class, 'index']);
     Route::get('/{id}', [UserHrdController::class, 'show']);
 
