@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserHrd;
 use App\Models\VerificationToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -24,7 +25,7 @@ class AuthController extends Controller
             return ResponseFormatter::createResponse(400,'Bad Request', ['errors'=>$validated->errors()->all()]);
         };
 
-        $hrd = UserHrd::where('email', $request->email)->first();
+        $hrd = UserHrd::where('email', $request->email)->firstOrFail();
         if (! $hrd) {
             return ResponseFormatter::createResponse(401, 'Unauthorized');
         }
@@ -45,7 +46,7 @@ class AuthController extends Controller
             VerificationToken::where('user_id', $hrd->id)->delete();
         }
 
-        $token = $hrd->createToken('token')->plainTextToken;
+        $token = $hrd->createToken('auth_token')->plainTextToken;
         VerificationToken::create([
             'user_id' => $hrd->id,
             'token' => $token,
@@ -61,6 +62,7 @@ class AuthController extends Controller
             'full_name' => $hrd->full_name,
             'email' => $hrd->email,
             'token' => $token,
+            'token_type' => 'Bearer',
         ];
 
         return ResponseFormatter::createResponse(200, 'Success login hrd', $response);
@@ -88,4 +90,12 @@ class AuthController extends Controller
 
         return ResponseFormatter::createResponse(201, 'success', $newHrd);
     }
+
+    // public function logout(Request $request)
+    // {
+    //     // Revoke current token
+    //     $request->user()->currentAccessToken()->delete();
+
+    //     return ResponseFormatter::createResponse(200, 'Success logout hrd');
+    // }
 }

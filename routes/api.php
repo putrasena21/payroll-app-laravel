@@ -19,9 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::delete('/logout', [AuthController::class, 'logout']);
 });
 
-Route::prefix('employee')->group(function () {
+Route::prefix('employee')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [UserEmployeeController::class, 'index']);
     Route::get('/{id}', [UserEmployeeController::class, 'show']);
 
@@ -32,7 +33,7 @@ Route::prefix('employee')->group(function () {
     Route::delete('/{id}', [UserEmployeeController::class, 'delete']);
 });
 
-Route::prefix('hrd')->group(function () {
+Route::prefix('hrd')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [UserHrdController::class, 'index']);
     Route::get('/{id}', [UserHrdController::class, 'show']);
 
