@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\UserEmployeeController;
 use App\Http\Controllers\Api\UserHrdController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\api\RecapDataController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,7 @@ Route::prefix('/auth')->group(function () {
     Route::delete('/logout', [AuthController::class, 'logout']);
 });
 
-Route::prefix('employee')->middleware('checkApiToken')->group(function () {
+Route::prefix('employee')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [UserEmployeeController::class, 'index']);
     Route::get('/{id}', [UserEmployeeController::class, 'show']);
 
@@ -43,6 +44,10 @@ Route::prefix('hrd')->middleware('auth:sanctum')->group(function () {
     Route::put('/password', [UserHrdController::class, 'editPassword']);
 
     Route::delete('/{id}', [UserHrdController::class, 'delete']);
+});
+
+Route::prefix('recap')->middleware('auth:sanctum')->group(function () {
+    Route::post('/', [RecapDataController::class, 'create']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
