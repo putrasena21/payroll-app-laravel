@@ -15,4 +15,9 @@ class UserEmployee extends Model
         'salary',
         'status'
     ];
+
+    public function recapData()
+    {
+        return $this->hasMany(RecapData::class);
+    }
 }
