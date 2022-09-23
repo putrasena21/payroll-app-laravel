@@ -4,6 +4,8 @@ use App\Http\Controllers\Api\UserEmployeeController;
 use App\Http\Controllers\Api\UserHrdController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\api\RecapDataController;
+
+use App\Http\Controllers\api\TotalClaimController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +50,10 @@ Route::prefix('hrd')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('recap')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [RecapDataController::class, 'create']);
+});
+
+Route::prefix('claim')->group(function () {
+    Route::get('/', [TotalClaimController::class, 'totalClaim']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
