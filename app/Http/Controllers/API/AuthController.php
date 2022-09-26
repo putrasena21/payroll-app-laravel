@@ -91,11 +91,19 @@ class AuthController extends Controller
         return ResponseFormatter::createResponse(201, 'success', $newHrd);
     }
 
-    // public function logout(Request $request)
-    // {
-    //     // Revoke current token
-    //     $request->user()->currentAccessToken()->delete();
+    public function logout(Request $request)
+    {
+        // revoke token
+        $request->user()->currentAccessToken()->delete();
 
-    //     return ResponseFormatter::createResponse(200, 'Success logout hrd');
-    // }
+        // update is_login
+        $hrd = UserHrd::find($request->user()->id);
+        $hrd->is_login = 0;
+        $hrd->save();
+
+        // delete token on verification_token table
+        VerificationToken::where('user_id', $hrd->id)->delete();
+
+        return ResponseFormatter::createResponse(200, 'Success logout hrd');
+    }
 }
