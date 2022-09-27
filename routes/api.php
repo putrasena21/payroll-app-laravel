@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
-    Route::delete('/logout', [AuthController::class, 'logout']);
+    Route::delete('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
 Route::prefix('employee')->middleware('auth:sanctum')->group(function () {
@@ -50,10 +50,13 @@ Route::prefix('hrd')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('recap')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [RecapDataController::class, 'create']);
+    Route::post('/import', [RecapDataController::class, 'importExcel']);
 });
 
 Route::prefix('claim')->group(function () {
     Route::get('/', [TotalClaimController::class, 'totalClaim']);
+
+    Route::get('/show', [TotalClaimController::class, 'recapClaim']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

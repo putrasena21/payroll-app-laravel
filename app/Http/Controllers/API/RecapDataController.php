@@ -4,10 +4,12 @@ namespace App\Http\Controllers\api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Imports\RecapDataImport;
 use App\Models\RecapData;
 use App\Models\UserEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RecapDataController extends Controller
 {
@@ -182,5 +184,31 @@ class RecapDataController extends Controller
     public function destroy(RecapData $recapData)
     {
         //
+    }
+
+    public function importExcel(Request $request)
+    {
+        $validated = Validator::make($request->all(),[
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        if ($validated->fails()) {
+            return ResponseFormatter::createResponse(
+                400,
+                'Failed to import recap data',
+                ['errors' => $validated->errors()->all()]
+            );
+        }
+
+        $file = $request->file('file');
+        $fileName = rand().$file->getClientOriginalName();
+        $file->move('uploads', $fileName);
+
+        Excel::import(new RecapDataImport, public_path('uploads/'.$fileName));
+
+        return ResponseFormatter::createResponse(
+            200,
+            'Success import recap data',
+        );
     }
 }
